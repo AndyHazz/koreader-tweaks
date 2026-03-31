@@ -1,6 +1,6 @@
 # KOReader Mods
 
-A collection of patches and style tweaks for [KOReader](https://github.com/koreader/koreader).
+A collection of patches, plugins, and style tweaks for [KOReader](https://github.com/koreader/koreader).
 
 ## Patches
 
@@ -11,6 +11,14 @@ User patches go in the KOReader `patches/` directory. Copy the `.lua` file and r
 | [2-suppress-opening-dialog.lua](patches/2-suppress-opening-dialog.lua) | Hides the "Opening file '...'" dialog that briefly flashes when opening a book. |
 | [2-coverbrowser-swipe-updown.lua](patches/2-coverbrowser-swipe-updown.lua) | Adds up/down swipe for page navigation in CoverBrowser History/Collections views. |
 | [2-suppress-frontlight-notifications.lua](patches/2-suppress-frontlight-notifications.lua) | Suppresses "Frontlight intensity set to X" and "Warmth set to X" notifications when using gestures to change brightness/warmth. |
+
+## Plugins
+
+Plugins go in the KOReader `plugins/` directory. Copy the entire `.koplugin` folder and restart KOReader.
+
+| Plugin | Description |
+|--------|-------------|
+| [readingspeedinspector.koplugin](plugins/readingspeedinspector.koplugin) | Shows how reading speed and time-remaining estimates are calculated, with a per-page histogram and detailed stats breakdown. Accessible via Reading statistics menu and as a dispatcher action. |
 
 Also see [bookends.koplugin](https://github.com/AndyHazz/bookends.koplugin) — configurable text overlays at 6 screen positions.
 
@@ -31,11 +39,11 @@ CSS style tweaks go in the KOReader `styletweaks/` directory. Each `.css` file i
 
 ## Installation paths
 
-| Device | Patches | Style Tweaks |
-|--------|---------|--------------|
-| Kindle | `/mnt/us/koreader/patches/` | `/mnt/us/koreader/styletweaks/` |
-| Kobo | `/mnt/onboard/.adds/koreader/patches/` | `/mnt/onboard/.adds/koreader/styletweaks/` |
-| Android | Varies | Same |
+| Device | Patches | Plugins | Style Tweaks |
+|--------|---------|---------|--------------|
+| Kindle | `/mnt/us/koreader/patches/` | `/mnt/us/koreader/plugins/` | `/mnt/us/koreader/styletweaks/` |
+| Kobo | `/mnt/onboard/.adds/koreader/patches/` | `/mnt/onboard/.adds/koreader/plugins/` | `/mnt/onboard/.adds/koreader/styletweaks/` |
+| Android | Varies | Same | Same |
 
 ## Compatibility
 
