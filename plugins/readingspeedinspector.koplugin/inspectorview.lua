@@ -1,6 +1,4 @@
 local Blitbuffer = require("ffi/blitbuffer")
-local CenterContainer = require("ui/widget/container/centercontainer")
-local CloseButton = require("ui/widget/closebutton")
 local Device = require("device")
 local Font = require("ui/font")
 local FrameContainer = require("ui/widget/container/framecontainer")
@@ -40,29 +38,24 @@ function InspectorView:init()
     if Device:hasKeys() then
         self.key_events.Close = { { Device.input.group.Back } }
     end
-    if Device:isTouchDevice() then
-        self.ges_events.Swipe = {
-            GestureRange:new{ ges = "swipe", range = self.dimen }
-        }
-    end
 
     -- Gather data
     local data = DataGatherer:collect(self.ui)
     local fmt = data.duration_format
 
-    -- Layout constants
+    -- Layout constants — use named font faces for device-independent scaling
     local padding = Size.padding.large
     local content_width = self.width - 2 * padding - ScrollableContainer:getScrollbarWidth()
-    local font_face_normal = Font:getFace("cfont", 16)
-    local font_face_bold = Font:getFace("cfont", 16)
-    local font_face_small = Font:getFace("cfont", 14)
-    local font_face_title_section = Font:getFace("cfont", 18)
+    local font_face_normal = Font:getFace("infofont")         -- 24pt scaled
+    local font_face_small = Font:getFace("x_smallinfofont")   -- 20pt scaled
+    local font_face_section = Font:getFace("tfont")           -- 26pt bold scaled
+    local row_spacing = Size.span.vertical_default
 
     -- Build the content
     local vgroup = VerticalGroup:new{ align = "left" }
 
     -- === FORMULA SECTION ===
-    table.insert(vgroup, self:buildSectionTitle(_("Time remaining estimate"), font_face_title_section, content_width))
+    table.insert(vgroup, self:buildSectionTitle(_("Time remaining estimate"), font_face_section, content_width))
     table.insert(vgroup, VerticalSpan:new{ width = Size.span.vertical_default })
 
     local avg_str = datetime.secondsToClockDuration(fmt, data.avg_time, false)
@@ -90,17 +83,38 @@ function InspectorView:init()
     table.insert(vgroup, VerticalSpan:new{ width = Size.span.vertical_large })
 
     -- === HISTOGRAM SECTION ===
-    table.insert(vgroup, self:buildSectionTitle(_("Per-page reading time"), font_face_title_section, content_width))
+    table.insert(vgroup, self:buildSectionTitle(_("Per-page reading time"), font_face_section, content_width))
     table.insert(vgroup, VerticalSpan:new{ width = Size.span.vertical_default })
 
     if #data.per_page > 0 then
-        -- Legend
-        local legend_text = _("■ historical  ") .. _("■ this session  ") .. _("■ capped  ") .. _("--- average")
-        table.insert(vgroup, TextWidget:new{
-            text = legend_text,
+        -- Legend with correctly coloured squares
+        local swatch_size = Screen:scaleBySize(10)
+        local legend_group = HorizontalGroup:new{}
+        local function addLegendItem(label, color)
+            -- Coloured swatch using LineWidget as a filled rectangle
+            table.insert(legend_group, LineWidget:new{
+                dimen = Geom:new{ w = swatch_size, h = swatch_size },
+                background = color,
+                style = "solid",
+            })
+            table.insert(legend_group, HorizontalSpan:new{ width = Size.span.horizontal_small })
+            table.insert(legend_group, TextWidget:new{
+                text = label,
+                face = font_face_small,
+                fgcolor = Blitbuffer.COLOR_DARK_GRAY,
+            })
+            table.insert(legend_group, HorizontalSpan:new{ width = Size.padding.default })
+        end
+        addLegendItem(_("historical"), Blitbuffer.COLOR_DARK_GRAY)
+        addLegendItem(_("this session"), Blitbuffer.COLOR_GRAY)
+        addLegendItem(_("capped"), Blitbuffer.COLOR_BLACK)
+        -- Dashed line label for average
+        table.insert(legend_group, TextWidget:new{
+            text = "--- " .. _("average"),
             face = font_face_small,
             fgcolor = Blitbuffer.COLOR_DARK_GRAY,
         })
+        table.insert(vgroup, legend_group)
         table.insert(vgroup, VerticalSpan:new{ width = Size.span.vertical_default })
 
         -- Histogram
@@ -144,7 +158,7 @@ function InspectorView:init()
     table.insert(vgroup, VerticalSpan:new{ width = Size.span.vertical_large })
 
     -- === STATS BREAKDOWN ===
-    table.insert(vgroup, self:buildSectionTitle(_("Calculation breakdown"), font_face_title_section, content_width))
+    table.insert(vgroup, self:buildSectionTitle(_("Calculation breakdown"), font_face_section, content_width))
     table.insert(vgroup, VerticalSpan:new{ width = Size.span.vertical_default })
 
     local stats_rows = {}
@@ -193,14 +207,15 @@ function InspectorView:init()
 
     for _, row in ipairs(stats_rows) do
         if row == "separator" then
-            table.insert(vgroup, VerticalSpan:new{ width = Size.span.vertical_default })
+            table.insert(vgroup, VerticalSpan:new{ width = row_spacing })
             table.insert(vgroup, LineWidget:new{
                 dimen = Geom:new{ w = content_width, h = Size.line.medium },
                 background = Blitbuffer.COLOR_LIGHT_GRAY,
             })
-            table.insert(vgroup, VerticalSpan:new{ width = Size.span.vertical_default })
+            table.insert(vgroup, VerticalSpan:new{ width = row_spacing })
         else
             table.insert(vgroup, self:buildKeyValueRow(row[1], row[2], font_face_normal, content_width))
+            table.insert(vgroup, VerticalSpan:new{ width = row_spacing })
         end
     end
 
@@ -219,6 +234,7 @@ function InspectorView:init()
             w = self.width,
             h = scroll_height,
         },
+        show_parent = self,
         FrameContainer:new{
             padding = padding,
             bordersize = 0,
@@ -276,13 +292,6 @@ end
 function InspectorView:onClose()
     UIManager:close(self, "full")
     return true
-end
-
-function InspectorView:onSwipe(_, ges)
-    if ges.direction == "south" then
-        self:onClose()
-        return true
-    end
 end
 
 return InspectorView

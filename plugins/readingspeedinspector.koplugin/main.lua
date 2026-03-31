@@ -22,29 +22,18 @@ function ReadingSpeedInspector:init()
 end
 
 function ReadingSpeedInspector:addToMainMenu(menu_items)
-    local stats_menu = menu_items.statistics
-    if stats_menu and stats_menu.sub_item_table then
-        table.insert(stats_menu.sub_item_table, {
-            text = _("Reading speed inspector"),
-            callback = function()
-                self:showInspector()
-            end,
-            enabled_func = function()
-                return self.ui.statistics and self.ui.statistics:isEnabled()
-            end,
-        })
-    else
-        menu_items.reading_speed_inspector = {
-            text = _("Reading speed inspector"),
-            sorting_hint = "more_tools",
-            callback = function()
-                self:showInspector()
-            end,
-            enabled_func = function()
-                return self.ui.statistics and self.ui.statistics:isEnabled()
-            end,
-        }
-    end
+    -- Use sorting_hint so the menu sorter places this inside the statistics
+    -- submenu regardless of plugin load order.
+    menu_items.reading_speed_inspector = {
+        text = _("Reading speed inspector"),
+        sorting_hint = "statistics",
+        callback = function()
+            self:showInspector()
+        end,
+        enabled_func = function()
+            return self.ui.statistics and self.ui.statistics:isEnabled()
+        end,
+    }
 end
 
 function ReadingSpeedInspector:showInspector()
@@ -56,7 +45,9 @@ function ReadingSpeedInspector:showInspector()
 end
 
 function ReadingSpeedInspector:onShowReadingSpeedInspector()
-    self:showInspector()
+    if self.ui.statistics and self.ui.statistics:isEnabled() then
+        self:showInspector()
+    end
 end
 
 return ReadingSpeedInspector
