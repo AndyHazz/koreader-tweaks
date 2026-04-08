@@ -11,6 +11,7 @@ User patches go in the KOReader `patches/` directory. Copy the `.lua` file and r
 | [2-suppress-opening-dialog.lua](patches/2-suppress-opening-dialog.lua) | Hides the "Opening file '...'" dialog that briefly flashes when opening a book. |
 | [2-coverbrowser-swipe-updown.lua](patches/2-coverbrowser-swipe-updown.lua) | Adds up/down swipe for page navigation in CoverBrowser History/Collections views. |
 | [2-suppress-frontlight-notifications.lua](patches/2-suppress-frontlight-notifications.lua) | Suppresses "Frontlight intensity set to X" and "Warmth set to X" notifications when using gestures to change brightness/warmth. |
+| [2-dogear-custom.lua](patches/2-dogear-custom.lua) | Replaces the default bookmark dogear with a custom folded-corner icon at 4x scale. Copy [dogear-custom.png](icons/dogear-custom.png) to `koreader/icons/`. |
 
 ## Plugins
 
