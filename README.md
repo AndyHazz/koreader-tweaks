@@ -38,6 +38,14 @@ CSS style tweaks go in the KOReader `styletweaks/` directory. Each `.css` file i
 | [tables.css](styletweaks/tables.css) | Table formatting |
 | [toc.css](styletweaks/toc.css) | Table of contents styling |
 
+## Device scripts
+
+Standalone shell scripts for one-off device maintenance. Run over SSH on the target device.
+
+| Script | Description |
+|--------|-------------|
+| [syncthing-ext-storage.sh](scripts/syncthing-ext-storage.sh) | Moves Syncthing's SQLite database off VFAT (`/mnt/us`) to an ext3 partition (`/var/local`) on the Kindle. Fixes the "disk I/O error: no such file or directory" crash loop that Syncthing 2.x hits under burst write load on VFAT. Preserves the device ID by copying identity files; patches `syncthing.koplugin/main.lua`'s `homePath()` in-place. |
+
 ## Installation paths
 
 | Device | Patches | Plugins | Style Tweaks |
