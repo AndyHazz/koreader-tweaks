@@ -6,13 +6,29 @@ h1, h2, h3, h4, h5, h6 {
     font-family: fantasy;
     font-weight: 300 !important;
     color: black;
-    line-height: 1em;
+    line-height: 1.25 !important;
     border-bottom: 2px outset lightgrey;
     background-color: #eee;
     padding: 0.5em;
     margin: 1em 0em 1em 0em !important;
     display: inline-block;
     text-align: left;
+    word-spacing: 0.5em !important;
+}
+
+/* Explicit overrides for images inside headings — img.css forces
+   `display: block; margin: 2em auto; height: auto` on every img, which
+   breaks word-by-word art titles. Restore inline sizing and give each
+   image horizontal padding so adjacent word-images have visible gaps. */
+h1 img, h2 img, h3 img, h4 img, h5 img, h6 img {
+    display: inline-block !important;
+    height: 1em !important;
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 0.3em !important;
+    vertical-align: middle !important;
+    background: none !important;
 }
 
 h1 { font-size: 1.8em; }
